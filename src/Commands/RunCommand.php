@@ -13,7 +13,7 @@ class RunCommand extends Command
 
     public function configure()
     {
-        $this->setDescription('Runs backstop reference and then test');
+        $this->setDescription('Runs backstop and builds the html report.');
     }
 
     public function execute(InputInterface $input, OutputInterface $out)
@@ -25,19 +25,19 @@ class RunCommand extends Command
         $helper = $this->getHelper('process');
 
         $refProcess = new Process($refCmd);
+        $refProcess->setTimeout(1 * 60 * 60); // 1 hr
         $helper->run($out, $refProcess);
 
         $out->writeln('<info>Running test</info>');
 
         $testProcess = new Process($testCmd);
+        $testProcess->setTimeout(1 * 60 * 60); // 1 hr
         $helper->run($out, $testProcess);
 
         if ($input->getOption('verbose')) {
             $out->write($refProcess->getOutput());
             $out->write($testProcess->getOutput());
         }
-
-        $out->write($testProcess->getOutput());
         return 0;
     }
 }

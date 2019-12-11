@@ -65,6 +65,7 @@ class GenerateScenarioCommand extends Command
         $referenceDomain = $this->cleanUrl($input->getOption('ref-domain'));
         $testDomain = $this->cleanUrl($input->getOption('url'));
 
+
         foreach ($records as $record) {
             // skip empty routes
             if (!trim($record[0])) {
@@ -87,6 +88,9 @@ class GenerateScenarioCommand extends Command
             copy($configLocation, $configLocation . '.' . date('Y-m-d') . '.bak');
         }
         file_put_contents($configLocation, json_encode($data, JSON_PRETTY_PRINT));
+
+        $output->writeln('<info>Generated ' . count($scenarios) . ' scenarios.</>');
+        $output->writeln('<comment>You can run the report now with <info>console vrt:run</info></comment>');
 
         return 0;
     }
