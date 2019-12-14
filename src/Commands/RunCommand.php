@@ -38,6 +38,8 @@ class RunCommand extends Command
             $out->write($refProcess->getOutput());
             $out->write($testProcess->getOutput());
         }
+
+        $out->writeln('<comment>You can browse the results running <info>console vrt:server</info></comment>');
         return 0;
     }
 }
