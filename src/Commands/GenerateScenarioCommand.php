@@ -48,8 +48,8 @@ class GenerateScenarioCommand extends Command
 
     public function execute(InputInterface $input, OutputInterface $output)
     {
-        $templateLocation = __DIR__ . '/../../backstop.template.json';
-        $configLocation = __DIR__ . '/../../backstop.json';
+        $templateLocation = __DIR__ . '/../../var/backstop/backstop.template.json';
+        $configLocation = __DIR__ . '/../../var/backstop/backstop.json';
 
         if (!file_exists($templateLocation)) {
             throw new \Exception('The backstop template is missing!');

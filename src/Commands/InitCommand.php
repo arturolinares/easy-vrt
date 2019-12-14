@@ -23,7 +23,7 @@ class InitCommand extends Command
           'run',
           '--rm',
           '-v',
-          __DIR__ . '/../../:/src',
+          __DIR__ . '/../../var/backstop:/src',
           'backstopjs/backstopjs',
           'init',
         ]);
@@ -36,7 +36,7 @@ class InitCommand extends Command
 
         $output->writeln('Changing backstop.json owner to make it writeable...');
         $chmod = new Process(['sudo', 'chown', '1000',
-          realpath(__DIR__ . '/../..') . '/backstop.json']);
+          realpath(__DIR__ . '/../../var/backstop') . '/backstop.json']);
         $helper->run($output, $chmod);
 
         return 0;

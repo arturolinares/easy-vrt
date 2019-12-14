@@ -20,7 +20,7 @@ class ServerCommand extends Command
 
     public function execute(InputInterface $input, OutputInterface $out)
     {
-        $root_dir = realpath(__DIR__ . '/../../');
+        $root_dir = realpath(__DIR__ . '/../../var/backstop');
         $results_path = 'backstop_data';
         $port = $input->getOption('port');
         $process = new Process(

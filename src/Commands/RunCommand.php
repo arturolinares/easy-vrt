@@ -19,7 +19,7 @@ class RunCommand extends Command
     public function execute(InputInterface $input, OutputInterface $out)
     {
         $out->writeln('<info>Running reference</info>');
-        $dir = realpath(__DIR__ . '/../../');
+        $dir = realpath(__DIR__ . '/../../var/backstop');
         $refCmd = [ "docker", "run" , "--rm" , "-v" , "$dir:/src" , "backstopjs/backstopjs" , "reference", ];
         $testCmd = [ "docker", "run" , "--rm" , "-v" , "$dir:/src" , "backstopjs/backstopjs" , "test"];
         $helper = $this->getHelper('process');
