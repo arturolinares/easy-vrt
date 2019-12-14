@@ -9,7 +9,7 @@ tool.**
 
 ## Installation
 
-1. `git clone ${REPO HERE}`: Get the code.
+1. `git clone git@github.com:arturolinares/easy-vrt.git`: Get the code.
 2. `composer install`: Install this project dependencies.
 3. `bin/console vrt:init`: Prepares backstop.
 
