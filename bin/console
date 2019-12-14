@@ -1,7 +1,9 @@
+#!/usr/bin/env php
 <?php
 require __DIR__ . '/../vendor/autoload.php';
 
 use App\Commands\GenerateScenarioCommand;
+use App\Commands\InitCommand;
 use App\Commands\RunCommand;
 use App\Commands\ServerCommand;
 use Symfony\Component\Console\Application;
@@ -11,5 +13,6 @@ $application = new Application();
 $application->add(new GenerateScenarioCommand());
 $application->add(new RunCommand());
 $application->add(new ServerCommand());
+$application->add(new InitCommand());
 
 $application->run();
