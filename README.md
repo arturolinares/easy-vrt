@@ -17,17 +17,18 @@ tool.**
 
 ```
 console  vrt:init    Prepares backstop worspace on directory "var/backstop/backstop_data".
-console  vrt:gen     Generates a backstop config file using the template in the same directory.
+console  vrt:gen     Generates a backstop config file from a CSV with the routes to test.
 console  vrt:run     Runs backstop and builds the html report.
 console  vrt:server  Starts a server to browse the results.
 ```
 
 ## Usage
 
-Once installed:
+Once the project is installed you will want to compare two sites. Follow these
+steps:
 
-1. Generate the backstop scenarios.
-2. Run the tests using the generated configs.
+1. Generate the backstop scenarios using a CSV file containing the routes to visit.
+2. Run the tests.
 3. Browse the results to visualize the differences.
 
 To generate the scenarios use the commmand `vrt:gen`. It will use a CSV file
@@ -36,18 +37,19 @@ with the routes to generate them:
     bin/console vrt:gen path/to/routes.csv --ref-domain=http://prod.com --url=http://my-qa.com
 
 You can find a sample of the CSV file in the `sample` directory. The file has
-two columns: the route and an optional label. For example:
+two fields: the route and an optional label. For example:
 
     /,"The Homepage"
     /category/tag,
-    /about-us, "About US"
+    "/about-us", "About US"
 
 You can set the reference domain using the flag `--ref-domain`. This is normally
-production. Use the flag `--url` to specify the domain you want to test.
+production. Use the flag `--url` to specify the domain you want to compare.
 
-To actually run the tests use `vrt:run`. This commmand will run backstop using
-a Docker container. Also, if you want to see what the script is doing, you can
-change the verbosity with `-v`, `-vv` and `-vvv`.
+Until now you only have configured backstop. To actually run the tests use
+`vrt:run`. This commmand will run backstop using a Docker container. Also, if
+you want to see what the script is doing, you can change the verbosity with
+`-v`, `-vv` and `-vvv`.
 
 Finally, to see the report, use `vrt:server` to browse the diffs.
 
@@ -55,8 +57,8 @@ Finally, to see the report, use `vrt:server` to browse the diffs.
 
 I normally work on different and very active projects with several testing
 environments. I needed a simple and fast way to generate visual regression
-tests between them, even just to compare my local environment to integration
-servers or two different test servers and I found cumbersome to edit backstop
-configuration files to just to change servers.
+tests between them, or even to just to compare my local environment to an integration
+server. I find cumbersome to edit backstop configuration files frequently just to
+change servers.
 
-Besides, I wanted to test Symfony console libraries :)
+Also, I wanted to test Symfony console libraries :)
