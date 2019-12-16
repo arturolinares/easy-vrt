@@ -16,10 +16,10 @@ tool.**
 ## Commmands
 
 ```
-console  vrt:init    Prepares backstop worspace on directory "var/backstop/backstop_data".
-console  vrt:gen     Generates a backstop config file from a CSV with the routes to test.
-console  vrt:run     Runs backstop and builds the html report.
-console  vrt:server  Starts a server to browse the results.
+bin/console  vrt:init    Prepares backstop worspace on directory "var/backstop/backstop_data".
+bin/console  vrt:gen     Generates a backstop config file from a CSV with the routes to test.
+bin/console  vrt:run     Runs backstop and builds the html report.
+bin/console  vrt:server  Starts a server to browse the results.
 ```
 
 ## Usage
