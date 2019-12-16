@@ -1,5 +1,5 @@
 **Console tool to generate visual regression tests between two environments. It is
-a simple wrapper for the awsome [backstop](https://github.com/garris/BackstopJS)
+a simple wrapper for the awesome [backstop](https://github.com/garris/BackstopJS)
 tool.**
 
 ## Requirements
