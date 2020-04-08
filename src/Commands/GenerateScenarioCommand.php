@@ -42,7 +42,8 @@ class GenerateScenarioCommand extends Command
             ->addOption('ref-domain', 'r', InputOption::VALUE_OPTIONAL, 'The reference domain. This will be prepended to the routes to form the reference urls.', '')
             ->addOption('url', 'u', InputOption::VALUE_REQUIRED, 'The test domain. This will be prepended to the routes to form the test url.')
             ->addOption('delimiter', 'd', InputOption::VALUE_OPTIONAL, 'Set the CSV delimiter (uses "," by default).', ',')
-            ->addOption('backup', 'b', InputOption::VALUE_OPTIONAL, 'If the resulting config file already exists, make a backup before replacing it.', true);
+            ->addOption('backup', 'b', InputOption::VALUE_OPTIONAL, 'If the resulting config file already exists, make a backup before replacing it.', true)
+            ->addOption('prefix', 'p', InputOption::VALUE_IS_ARRAY | InputOption::VALUE_OPTIONAL, 'Optional prefixes for each input line. Useful for language routed prefixes.')
         ;
     }
 
@@ -60,26 +61,20 @@ class GenerateScenarioCommand extends Command
         $csv = Reader::createFromPath($input->getArgument('routes'));
         $csv->setDelimiter($input->getOption('delimiter'));
         $records = $csv->getRecords();
-        $scenarios = [];
 
-        $referenceDomain = $this->cleanUrl($input->getOption('ref-domain'));
+        $referenceDomain = $input->getOption('ref-domain');
+        if ($referenceDomain) {
+            $referenceDomain = $this->cleanUrl($referenceDomain);
+        }
+
         $testDomain = $this->cleanUrl($input->getOption('url'));
 
+        $prefixes = $input->getOption('prefix');
 
-        foreach ($records as $record) {
-            // skip empty routes
-            if (!trim($record[0])) {
-                continue;
-            }
-
-            // Clone the scenario template.
-            $new_scenario = json_decode(json_encode($this->scenarioTemplate), true);
-            // Set the scenario data pulled from the CSV file.
-            $new_scenario['label'] = !empty(trim($record[1])) ? $record[1] : $record[0];
-            $new_scenario['referenceUrl'] = $referenceDomain ? $referenceDomain . '/' . $record[0] : '';
-            $new_scenario['url'] = $testDomain . '/' . $record[0];
-            $scenarios[] = $new_scenario;
-
+        if ($prefixes) {
+            $scenarios = $this->prefixedScenarios($testDomain, $referenceDomain, $prefixes, $records);
+        } else {
+            $scenarios = $this->simpleScenarios($testDomain, $referenceDomain, $records);
         }
 
         $data = json_decode($templateContents, true);
@@ -94,6 +89,69 @@ class GenerateScenarioCommand extends Command
         $output->writeln('<comment>You can run the report now with <info>console vrt:run</info></comment>');
 
         return 0;
+    }
+
+    /**
+     * Generates a scenario for each prefix in the route.
+     *
+     * @param string $testDomain
+     * @param string $referenceDomain
+     * @param array $prefixes
+     * @param array $records
+     * @return array
+     */
+    public function prefixedScenarios(string $testDomain, string $referenceDomain, array $prefixes, \Iterator $records) : array
+    {
+        $scenarios = [];
+        foreach ($records as $record) {
+            // skip empty routes
+            if (!trim($record[0])) {
+                continue;
+            }
+
+            foreach ($prefixes as $prefix) {
+                // Clone the scenario template.
+                $new_scenario = json_decode(json_encode($this->scenarioTemplate), true);
+                // Set the scenario data pulled from the CSV file.
+                $new_scenario['label'] = !empty(trim($record[1])) ?
+                    $record[1] : $record[0] . " ($prefix) ";
+                $new_scenario['referenceUrl'] = $referenceDomain ?
+                    $referenceDomain . '/' . $prefix . '/' . $record[0] : '';
+                $new_scenario['url'] = $testDomain . '/' . $prefix .  $record[0];
+                $scenarios[] = $new_scenario;
+            }
+        }
+
+        return $scenarios;
+    }
+
+    /**
+     * Iterates the routes to generate simple scenarios (without prefixes)
+     *
+     * @param string $testDomain
+     * @param string $referenceDomain
+     * @param array $records
+     * @return array
+     */
+    public function simpleScenarios(string $testDomain, string $referenceDomain, \Iterator $records) : array
+    {
+        $scenarios = [];
+        foreach ($records as $record) {
+            // skip empty routes
+            if (!trim($record[0])) {
+                continue;
+            }
+
+            // Clone the scenario template.
+            $new_scenario = json_decode(json_encode($this->scenarioTemplate), true);
+            // Set the scenario data pulled from the CSV file.
+            $new_scenario['label'] = !empty(trim($record[1])) ? $record[1] : $record[0];
+            $new_scenario['referenceUrl'] = $referenceDomain ? $referenceDomain . '/' . $record[0] : '';
+            $new_scenario['url'] = $testDomain . '/' . $record[0];
+            $scenarios[] = $new_scenario;
+        }
+
+        return $scenarios;
     }
 
     public function cleanUrl(string $url) : string

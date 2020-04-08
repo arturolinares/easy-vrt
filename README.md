@@ -46,6 +46,24 @@ two fields: the route and an optional label. For example:
 You can set the reference domain using the flag `--ref-domain`. This is normally
 production. Use the flag `--url` to specify the domain you want to compare.
 
+Sometimes you need to create several scenarios for the same route but different
+prefix. For example, when using multilingual sites. To specify the prefixes you
+can use the `--prefix` (`-p`) option:
+
+    bin/console vrt:gen path/to/routes.csv -u http://my-qa.com -p es -p en -p fr
+
+The above will generate scenarios for these urls:
+
+    /es/
+    /en/
+    /fr/
+    /es/category/tag
+    /en/category/tag
+    /fr/category/tag
+    /es/about-us
+    /en/about-us
+    /fr/about-us
+
 Until now you only have configured backstop. To actually run the tests use
 `vrt:run`. This commmand will run backstop using a Docker container. Also, if
 you want to see what the script is doing, you can change the verbosity with

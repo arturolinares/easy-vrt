@@ -20,8 +20,16 @@ class RunCommand extends Command
     {
         $out->writeln('<info>Running reference</info>');
         $dir = realpath(__DIR__ . '/../../var/backstop');
-        $refCmd = [ "docker", "run" , "--rm" , "-v" , "$dir:/src" , "backstopjs/backstopjs" , "reference", ];
+        $refCmd = [ "docker", "run" , "--rm" , "-v" , "$dir:/src" , "backstopjs/backstopjs" , "reference"];
         $testCmd = [ "docker", "run" , "--rm" , "-v" , "$dir:/src" , "backstopjs/backstopjs" , "test"];
+
+        // If we're in a WSL2 environment, use the default gateway and google
+        // DNS to access local and remote sites.
+        if (getenv('WSL_DISTRO_NAME')) {
+            $refCmd = [ "docker", "run", "--rm", "--dns", "192.168.64.100",
+                "--dns", "8.8.8.8", "-v", "$dir:/src", "backstopjs/backstopjs", "reference"];
+        }
+
         $helper = $this->getHelper('process');
 
         $refProcess = new Process($refCmd);
