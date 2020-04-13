@@ -145,7 +145,7 @@ class GenerateScenarioCommand extends Command
             // Clone the scenario template.
             $new_scenario = json_decode(json_encode($this->scenarioTemplate), true);
             // Set the scenario data pulled from the CSV file.
-            $new_scenario['label'] = !empty(trim($record[1])) ? $record[1] : $record[0];
+            $new_scenario['label'] = !empty(trim($record[1] ?? '')) ? $record[1] : $record[0];
             $new_scenario['referenceUrl'] = $referenceDomain ? $referenceDomain . '/' . $record[0] : '';
             $new_scenario['url'] = $testDomain . '/' . $record[0];
             $scenarios[] = $new_scenario;
