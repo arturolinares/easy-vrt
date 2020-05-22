@@ -4,6 +4,7 @@ namespace App\Commands;
 
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Process\Process;
 
@@ -14,6 +15,7 @@ class RunCommand extends Command
     public function configure()
     {
         $this->setDescription('Runs backstop and builds the html report.');
+        $this->addOption('dns', 'd', InputOption::VALUE_OPTIONAL, 'An optional DNS server.');
     }
 
     public function execute(InputInterface $input, OutputInterface $out)
@@ -25,9 +27,11 @@ class RunCommand extends Command
 
         // If we're in a WSL2 environment, use the default gateway and google
         // DNS to access local and remote sites.
-        if (getenv('WSL_DISTRO_NAME')) {
-            $refCmd = [ "docker", "run", "--rm", "--dns", "192.168.64.100",
-                "--dns", "8.8.8.8", "-v", "$dir:/src", "backstopjs/backstopjs", "reference"];
+        if ($dns = $input->getOption('dns')) {
+            $refCmd = [ "docker", "run", "--rm", "--dns", $dns,
+                "-v", "$dir:/src", "backstopjs/backstopjs", "reference"];
+            $testCmd = [ "docker", "run" , "--rm" , "--dns", $dns,
+                "-v" , "$dir:/src" , "backstopjs/backstopjs" , "test"];
         }
 
         $helper = $this->getHelper('process');
